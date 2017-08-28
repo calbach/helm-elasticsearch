@@ -1,11 +1,12 @@
-apiVersion: extensions/v1beta1
-kind: Deployment
+apiVersion: apps/v1beta1
+kind: StatefulSet
 metadata:
   name: {{ template "fullname" . }}-data
   labels:
     component: {{ template "fullname" . }}
     role: data
 spec:
+  serviceName: {{ template "fullname" . }}-data
   replicas: {{ .Values.data.replicas }}
   template:
     metadata:
@@ -86,7 +87,13 @@ spec:
         volumeMounts:
         - name: storage
           mountPath: /data
-      volumes:
-        - emptyDir:
-            medium: ""
-          name: "storage"
+  volumeClaimTemplates:
+  - metadata:
+      name: storage
+      annotations:
+        volume.beta.kubernetes.io/storage-class: standard
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: {{ .Values.data.storage }}

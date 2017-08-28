@@ -83,9 +83,6 @@ spec:
         - containerPort: 9200
           name: http
           protocol: TCP
-        - containerPort: 9300
-          name: transport
-          protocol: TCP
         volumeMounts:
         - name: storage
           mountPath: /data
